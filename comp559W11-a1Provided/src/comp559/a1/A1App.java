@@ -64,7 +64,8 @@ public class A1App implements SceneGraphNode, Interactor {
      */
     public A1App() {
         system = new ParticleSystem();
-        system.integrator = forwardEuler;
+        //system.integrator = forwardEuler;
+        system.integrator = midpoint;
         ev = new EasyViewer( "COMP 559 W2011 - A1 Particle System", this, new Dimension(640,480), new Dimension(640,480) );
         ev.addInteractor(this);
     }

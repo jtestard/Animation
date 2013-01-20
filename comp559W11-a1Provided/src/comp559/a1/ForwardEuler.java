@@ -6,6 +6,15 @@ package comp559.a1;
  */
 public class ForwardEuler implements Integrator {
     
+	double [] dydt;
+	
+	/**
+	 * This int checks that if the dimension did change (which is a rare occurrence event).
+	 * -1 is chosen as default because it is an impossible value for the dimension.
+	 */
+	int old_n = -1;
+	
+	
     @Override
     public String getName() {
         return "Forward Euler";
@@ -23,7 +32,11 @@ public class ForwardEuler implements Integrator {
     @Override
     public void step(double[] y, int n, double t, double h, double[] yout, Function derivs) {
         // TODO: implement this method
-        double[] dydt = new double[n];
+        //Avoid useless memory allocation if size did not change
+    	if (old_n!=n) {
+        	dydt = new double[n];
+        	old_n = n;
+    	}
         
         //Get the derivatives
         derivs.derivs(t, y, dydt);
