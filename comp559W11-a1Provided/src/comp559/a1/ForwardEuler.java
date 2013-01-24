@@ -37,6 +37,8 @@ public class ForwardEuler implements Integrator {
         	dydt = new double[n];
         	old_n = n;
     	}
+    	
+    	dydt = new double[n];
         
         //Get the derivatives
         derivs.derivs(t, y, dydt);

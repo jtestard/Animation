@@ -24,6 +24,7 @@ public class Spring {
      * This vector represents the difference p1-p2 (vector between the two particles).
      */
     Vector2d l = null;
+    Vector2d v = null;
     Vector2d fp1 = null;
     Vector2d fp2 = null;
     
@@ -38,6 +39,7 @@ public class Spring {
         this.l = new Vector2d();
         this.fp1 = new Vector2d();
         this.fp2 = new Vector2d();
+        this.v = new Vector2d();
         recomputeRestLength();
         p1.springs.add(this);
         p2.springs.add(this);
@@ -62,20 +64,31 @@ public class Spring {
     	//Set up the line velocity
     	double vx = p1.v.x-p2.v.x;
     	double vy = p2.v.y-p2.v.y;
+    	v.set(vx,vy);
     	
     	//Set up spring for vector for particle 1.
-    	double fp1x = - (k * (l.length() - l0) + c * ((l.x * vx)/l.length()) ) * (l.x/l.length());
-    	double fp1y = - (k * (l.length() - l0) + c * ((l.y * vy)/l.length()) ) * (l.y/l.length());
+//    	double fp1x = - (k * (l.length() - l0) + c * ((l.x * vy)/l.length()) ) * (l.x/l.length());
+//    	double fp1y = - (k * (l.length() - l0) + c * ((l.y * vx)/l.length()) ) * (l.y/l.length());
     	
+    	double scalar = - (k * (l.length() - l0) + c * ((v.dot(l))/l.length()) );
+    	//TODO : remove allocationss
+    	fp1 = new Vector2d(l);
+    	fp1.normalize();
+    	fp1.scale(scalar);
+    	
+    	fp2 = new Vector2d(fp1);
+    	fp2.negate();
     	//Set up spring for vector for particle 2.
-    	double fp2x = - fp1x;
-    	double fp2y = - fp1y;
+//    	double fp2x = - fp1x;
+//    	double fp2y = - fp1y;
     	
     	//Add forces to particles
-    	fp1.set(fp1x,fp1y);
-    	p1.addForce(fp1);    	
-    	fp2.set(fp2x,fp2y);
-    	p2.addForce(fp2);     
+    	p1.f.x+=fp1.x;
+    	p1.f.y+=fp1.y;
+    	p2.f.x+=fp2.x;
+    	p2.f.y+=fp2.y;    	
+//    	p1.f.add(fp1);    	
+//    	p2.f.add(fp2);     
     }
    
     /**

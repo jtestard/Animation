@@ -309,27 +309,26 @@ public class ParticleSystem implements SceneGraphNode, Function, Filter {
         // set particle positions to given values
         setPhaseSpace( y );
     	double fx,fy;
-    	Vector2d force = new Vector2d();
+    	// TODO: Remove alloc
         
+    	for (Particle p : particles) {
+    		p.clearForce();
+    	}
+    	
     	//Include gravity force (if being used)
         if (useGravity.getValue()) {
         	//Should be gx=0 and gy=-1 (if orientation obvious).
-        	double gx=0;
-        	double gy=-1;
+
         	for (Particle p : particles) {
-        		fx = gx * gravity.getValue() * p.mass;
-        		fy = gy * gravity.getValue() * p.mass;
-        		force.set(fx,fy);
-        		p.addForce(force);
+        		p.f.y += gravity.getFloatValue() * p.mass;
         	}
         }
         
         //Include viscous damping
         for (Particle p : particles) {
-        	fx = -viscousDamping.getValue() * p.v.x;
-        	fy = -viscousDamping.getValue() * p.v.y;
-        	force.set(fx,fy);
-        	p.addForce(force);
+        	p.f.x += -viscousDamping.getFloatValue() * p.v.x;
+        	p.f.y += -viscousDamping.getFloatValue() * p.v.y;
+
         }
 
         //Include spring forces
@@ -340,11 +339,12 @@ public class ParticleSystem implements SceneGraphNode, Function, Filter {
         //Include spring damping
         
         // set dydt
+        int i = 0;
         for (Particle p : particles ) {
-        	dydt[p.index*4] = p.v.x; // x1_dot = v1
-        	dydt[p.index*4+1] = p.v.y; //x2_dot = v2
-        	dydt[p.index*4+2] = p.f.x / p.mass; //v1_dot = f1/m
-        	dydt[p.index*4+3] = p.f.y / p.mass; //v2_dot = f2/m
+        	dydt[i++/*p.index*4*/] = p.v.x; // x1_dot = v1
+        	dydt[i++/*p.index*4*/] = p.v.y; //x2_dot = v2
+        	dydt[i++/*p.index*4*/] = p.f.x / p.mass; //v1_dot = f1/m
+        	dydt[i++/*p.index*4*/] = p.f.y / p.mass; //v2_dot = f2/m
         }
     }
     

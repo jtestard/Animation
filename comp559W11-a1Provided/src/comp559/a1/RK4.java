@@ -59,12 +59,18 @@ public class RK4 implements Integrator {
         for (int i = 0 ; i < n ; i++) {
         	k4[i] = y[i] + h*dydt[i];
         	
-        }        
+        }
         
         //Compute final output.
         for (int i = 0 ; i < n ; i++) {
         	yout[i] = y[i] + (1/6)*k1[i] + (1/3)*k2[i] + (1/3)*k3[i] + (1/6)*k4[i];
         }
-        
+    }
+    
+    private void printArray(double[] array, String name) {
+    	System.out.println("Printing contents of " + name + ":");
+    	for (double d : array) {
+    		
+    	}
     }
 }
