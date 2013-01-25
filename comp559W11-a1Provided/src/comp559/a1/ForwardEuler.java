@@ -41,7 +41,7 @@ public class ForwardEuler implements Integrator {
     	dydt = new double[n];
         
         //Get the derivatives
-        derivs.derivs(t, y, dydt);
+        derivs.derivs(t+h, y, dydt);
         
         //Compute with forward euler.
         for (int i = 0 ; i < n ; i++) {

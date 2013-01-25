@@ -32,40 +32,44 @@ public class RK4 implements Integrator {
         	old_n = n;
     	}
     	
-        //Get the derivatives
-        derivs.derivs(t, y, dydt);
-        //Compute k1
-        for (int i = 0 ; i < n ; i++) {
-        	k1[i] = y[i] + h*dydt[i];
-        }
+    	//Compute k1
+       	derivs.derivs(t, y, k1);
+    	for (int i = 0; i < n; i++) {
+    		k1[i] *= h;
+    	}
+    	
+    	//Compute k2
+    	for (int i = 0; i < n; i++) {
+    		k2[i] = y[i] + k1[i]*0.5;
+    	}
+    	derivs.derivs(t + h/2.0, k2, k2);
+    	for (int i = 0; i < n; i++) {
+    		k2[i] *= h;
+    	}
 
-        //derive at k1.
-        derivs.derivs(t,k1,dydt);
-        //Compute k2
-        for (int i = 0 ; i < n ; i++) {
-        	k2[i] = (y[i] + h*dydt[i])/2;
-        }
-        
-        //derive at k2.
-        derivs.derivs(t,k2,dydt);
-        //Compute k3
-        for (int i = 0 ; i < n ; i++) {
-        	k3[i] = (y[i] + h*dydt[i])/2;
-        }
-
-        //derive at k3.
-        derivs.derivs(t,k3,dydt);
-        //Compute k4
-        for (int i = 0 ; i < n ; i++) {
-        	k4[i] = y[i] + h*dydt[i];
-        	
-        }
-        
-        //Compute final output.
-        for (int i = 0 ; i < n ; i++) {
-        	yout[i] = y[i] + (1/6)*k1[i] + (1/3)*k2[i] + (1/3)*k3[i] + (1/6)*k4[i];
-        }
-    }
+    	//Compute k3
+    	for (int i = 0; i < n; i++) {
+    		k3[i] = y[i] + k2[i] * 0.5;
+    	}
+    	derivs.derivs(t + h/2.0, k3, k3);
+    	for (int i = 0; i < n; i++) {
+    		k3[i] *= h;
+    	}
+    
+    	//Compute k4
+    	for (int i = 0; i < n; i++) {
+    		k4[i] = y[i] + k3[i];
+    	}
+    	derivs.derivs(t + h, k4, k4);
+    	for (int i = 0; i < n; i++) {
+    		k4[i] *= h;
+    	}
+    	
+    	//Compute total
+    	for (int i = 0; i < n; i++) {
+    		yout[i] = y[i] + k1[i]/6.0 + k2[i]/3.0 + k3[i]/3.0 + k4[i]/6.0;
+    	}
+     }
     
     private void printArray(double[] array, String name) {
     	System.out.println("Printing contents of " + name + ":");

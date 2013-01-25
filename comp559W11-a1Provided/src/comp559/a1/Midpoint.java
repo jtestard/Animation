@@ -26,20 +26,20 @@ public class Midpoint implements Integrator {
         	old_n = n;
     	}
     	
-        //Get the derivatives
+        //delta_x = h*f(x(t),t)
         derivs.derivs(t, y, dydt);
         
-        //Compute at euler step at midpoint. First evaluation.
+        //X = ((x(t)+delta_x)/2
         for (int i = 0 ; i < n ; i++) {
-        	y_midpoint[i] = (y[i] + h*dydt[i])/2;
+        	dydt[i] = (y[i] + h*dydt[i])/2;
         }
         
-        //derive at midpoint.
-        derivs.derivs(t,y_midpoint,dydt);
+        //f_mid = f(X,t)
+        derivs.derivs(t,dydt,y_midpoint);
         
-        //Compute final output.
+        //Compute final output. x(t+delta_t) = x(t) + delta_t*f_mid
         for (int i = 0 ; i < n ; i++) {
-        	yout[i] = y[i] + h*dydt[i];
+        	yout[i] = y[i] + h*y_midpoint[i];
         }
         
     }
