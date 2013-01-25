@@ -1,5 +1,11 @@
 package comp559.a1;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -115,13 +121,52 @@ public class ParticleSystem implements SceneGraphNode, Function, Filter {
 				p1 = p2;
 			}
 		} else if (which == 4) { // Used for particle systems scene.
-			// TODO Implement custom scene
-			System.out.println("System 4");
-			Point2d p = new Point2d(100, 100);
-			Vector2d d = new Vector2d(20, 0);
-			Particle p1 = new Particle(p.x - d.y, p.y + d.x, 0, 0);
-			p1.index = particles.size();
-			particles.add(p1);
+			BufferedReader br = null;
+			springStiffness.setValue(5000);
+			HashMap<String,Particle> particleMap = new HashMap<String,Particle>();
+			ArrayList<String> springp1 = new ArrayList<String>();
+			ArrayList<String> springp2 = new ArrayList<String>();			
+			try {
+				String sCurrentLine;
+				br = new BufferedReader(new FileReader(new File("").getAbsolutePath()+"/src/COMP559/a1/customscene.csv"));
+				while ((sCurrentLine = br.readLine()) != null) {
+					String tokens[] = sCurrentLine.split(",");
+					if (tokens[0].equalsIgnoreCase("particle")) {
+						Particle p = new Particle(Double.parseDouble(tokens[2]),
+								Double.parseDouble(tokens[3]),
+								Double.parseDouble(tokens[4]),
+								Double.parseDouble(tokens[5]));
+						p.pinned = Boolean.parseBoolean(tokens[6]);
+						p.index = particles.size();
+						particles.add(p);
+						particleMap.put(tokens[1], p);
+					} else if (tokens[0].equalsIgnoreCase("Spring")) {
+						springp1.add(tokens[1]);
+						springp2.add(tokens[2]);
+					} else {
+						//Do nothing
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (br != null)br.close();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+			//Create the springs
+			for (int i = 0 ; i < springp1.size() ; i++) {
+				String p1s = springp1.get(i);
+				String p2s = springp2.get(i);				
+				Particle p1 = particleMap.get(p1s);
+				Particle p2 = particleMap.get(p2s);
+				System.out.println("Creating spring between : "+ p1s + " and " + p2s);
+				if (p1!=null)
+					if (p2!=null) 
+						springs.add(new Spring(p1,p2));
+			}
 		}
 	}
 
@@ -556,7 +601,6 @@ public class ParticleSystem implements SceneGraphNode, Function, Filter {
 
 	@Override
 	public String toString() {
-		// TODO add your name below
 		String ret = "JULES TESTARD\n" + comments.getText() + "\n"
 				+ "particles = " + particles.size() + "\n";
 		if (explicit.getValue()) {

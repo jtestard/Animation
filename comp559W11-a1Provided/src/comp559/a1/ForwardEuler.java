@@ -1,7 +1,7 @@
 package comp559.a1;
 
 /**
- * TODO: finish this class!
+ * 
  * @author kry
  */
 public class ForwardEuler implements Integrator {

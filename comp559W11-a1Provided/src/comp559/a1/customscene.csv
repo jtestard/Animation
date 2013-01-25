@@ -1,0 +1,15 @@
+particle,p1,500,50,0,0,true
+particle,p2,250,50,0,0,false
+particle,p3,225,75,0,0,false
+particle,p4,250,100,0,0,false
+particle,p5,275,75,0,0,false
+particle,p6,250,75,0,0,false
+spring,p1,p2
+spring,p2,p3
+spring,p3,p4
+spring,p4,p5
+spring,p5,p2
+spring,p6,p2
+spring,p6,p3
+spring,p6,p4
+spring,p6,p5

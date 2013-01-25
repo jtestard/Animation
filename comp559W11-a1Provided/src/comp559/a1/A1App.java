@@ -256,6 +256,9 @@ public class A1App implements SceneGraphNode, Interactor {
             @Override
             public void actionPerformed(ActionEvent e) {
                 system.createSystem(4);
+                system.integrator = symplecticEuler;
+                system.explicit.setValue(true);
+                substeps.setValue(100);
             }
         });        
         
