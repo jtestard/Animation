@@ -79,16 +79,12 @@ public class Spring {
     	fp2 = new Vector2d(fp1);
     	fp2.negate();
     	//Set up spring for vector for particle 2.
-//    	double fp2x = - fp1x;
-//    	double fp2y = - fp1y;
     	
     	//Add forces to particles
     	p1.f.x+=fp1.x;
     	p1.f.y+=fp1.y;
     	p2.f.x+=fp2.x;
     	p2.f.y+=fp2.y;    	
-//    	p1.f.add(fp1);    	
-//    	p2.f.add(fp2);     
     }
    
     /**
@@ -96,7 +92,7 @@ public class Spring {
      * @param f
      */
     public void addForce(Vector f) {
-        // TODO: FINISH THIS CODE (probably very similar to what you did above)
+        // TODO: Change this code.
     	double lx = p1.p.x-p2.p.x;
     	double ly = p1.p.y-p2.p.y;
     	l.set(lx,ly);
