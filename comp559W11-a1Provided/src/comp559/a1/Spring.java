@@ -56,7 +56,7 @@ public class Spring {
      * Applies the spring force by adding a force to each particle
      */
     public void apply() {
-        // TODO: FINISH THIS CODE!
+    	//TODO : optimize memory allocation
     	//Set the line vector.
     	double lx = p1.p.x-p2.p.x;
     	double ly = p1.p.y-p2.p.y;
@@ -66,19 +66,13 @@ public class Spring {
     	double vy = p2.v.y-p2.v.y;
     	v.set(vx,vy);
     	
-    	//Set up spring for vector for particle 1.
-//    	double fp1x = - (k * (l.length() - l0) + c * ((l.x * vy)/l.length()) ) * (l.x/l.length());
-//    	double fp1y = - (k * (l.length() - l0) + c * ((l.y * vx)/l.length()) ) * (l.y/l.length());
-    	
     	double scalar = - (k * (l.length() - l0) + c * ((v.dot(l))/l.length()) );
-    	//TODO : remove allocationss
-    	fp1 = new Vector2d(l);
+    	fp1.set(l.x,l.y);
     	fp1.normalize();
     	fp1.scale(scalar);
     	
-    	fp2 = new Vector2d(fp1);
+    	fp2.set(fp1.x,fp1.y);
     	fp2.negate();
-    	//Set up spring for vector for particle 2.
     	
     	//Add forces to particles
     	p1.f.x+=fp1.x;
@@ -92,26 +86,30 @@ public class Spring {
      * @param f
      */
     public void addForce(Vector f) {
-        // TODO: Change this code.
+    	//TODO : rewrite this method.
+    	//Set the line vector.
     	double lx = p1.p.x-p2.p.x;
     	double ly = p1.p.y-p2.p.y;
     	l.set(lx,ly);
     	//Set up the line velocity
     	double vx = p1.v.x-p2.v.x;
     	double vy = p2.v.y-p2.v.y;
+    	v.set(vx,vy);
     	
-    	//Set up spring for vector for particle 1.
-    	double fp1x = - (k * (l.length() - l0) + c * ((l.x * vx)/l.length()) ) * (l.x/l.length());
-    	double fp1y = - (k * (l.length() - l0) + c * ((l.y * vy)/l.length()) ) * (l.y/l.length());
+    	double scalar = - (k * (l.length() - l0) + c * ((v.dot(l))/l.length()) );
+    	fp1.set(l.x,l.y);
+    	fp1.normalize();
+    	fp1.scale(scalar);
     	
-    	//Set up spring for vector for particle 2.
-    	double fp2x = - fp1x;
-    	double fp2y = - fp1y;    	
+    	fp2.set(fp1.x,fp1.y);
+    	fp2.negate();
     	
-    	f.add(p1.index*2,fp1x);
-    	f.add(p1.index*2+1,fp1y);
-    	f.add(p2.index*2,fp2x);
-    	f.add(p2.index*2+1,fp2y);    	
+    	//Add forces to particles
+//    	f.set(0,f.get(0)+fp1.x);
+//    	f.set(1,f.get(0)+fp1.x);    	
+//    	f.y+=fp1.y;
+//    	p2.f.x+=fp2.x;
+    	p2.f.y+=fp2.y;    	
     }
     
     /**
