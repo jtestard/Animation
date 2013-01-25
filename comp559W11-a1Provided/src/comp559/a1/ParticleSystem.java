@@ -529,7 +529,7 @@ public class ParticleSystem implements SceneGraphNode, Function, Filter {
     @Override
     public String toString() {
         // TODO add your name below
-        String ret = "YOUR NAME HERE\n" +
+        String ret = "JULES TESTARD\n" +
                      comments.getText() + "\n" +
                      "particles = " + particles.size() + "\n";
         if ( explicit.getValue() ) {

@@ -6,6 +6,8 @@ public class Midpoint implements Integrator {
 	
 	double [] dydt;
 	double [] y_midpoint;
+	double [] k1;
+	double [] k2;
 	//This int checks that if the dimension did change (which is a rare occurrence event).
 	int old_n = -1;
 	
@@ -15,10 +17,9 @@ public class Midpoint implements Integrator {
         return "midpoint";
     }
     
+    //Midpoint equivalent to Runge Kutta of order 2.
     @Override
     public void step(double[] y, int n, double t, double h, double[] yout, Function derivs) {
-        // TODO: implement this method
-    	
         //Avoid useless memory allocation if size did not change
     	if (old_n!=n) {
         	dydt = new double[n];
@@ -28,19 +29,27 @@ public class Midpoint implements Integrator {
     	
         //delta_x = h*f(x(t),t)
         derivs.derivs(t, y, dydt);
-        
-        //X = ((x(t)+delta_x)/2
         for (int i = 0 ; i < n ; i++) {
-        	dydt[i] = (y[i] + h*dydt[i])/2;
+        	dydt[i] *= h;
+        }
+        
+        //X = x(t)+delta_x/2
+        for (int i = 0 ; i < n ; i++) {
+        	y_midpoint[i] = y[i] + dydt[i]*0.5;
         }
         
         //f_mid = f(X,t)
-        derivs.derivs(t,dydt,y_midpoint);
+        derivs.derivs(t+h/2,y_midpoint,y_midpoint);
+        for (int i = 0 ; i < n ; i++) {
+        	y_midpoint[i] *= h;
+        }
         
         //Compute final output. x(t+delta_t) = x(t) + delta_t*f_mid
         for (int i = 0 ; i < n ; i++) {
-        	yout[i] = y[i] + h*y_midpoint[i];
+        	yout[i] = y[i] + y_midpoint[i];
         }
+    	
+    	
         
     }
 
