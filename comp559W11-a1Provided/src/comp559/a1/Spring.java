@@ -56,7 +56,7 @@ public class Spring {
      * Applies the spring force by adding a force to each particle
      */
     public void apply() {
-    	//TODO : optimize memory allocation
+    	
     	//Set the line vector.
     	double lx = p1.p.x-p2.p.x;
     	double ly = p1.p.y-p2.p.y;

@@ -250,6 +250,15 @@ public class A1App implements SceneGraphNode, Interactor {
             }
         });
         
+        JButton create4 = new JButton("create test system 4");
+        vfp.add( create4 );
+        create4.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                system.createSystem(4);
+            }
+        });        
+        
         vfp.add( record.getControls() );
         vfp.add( run.getControls() );
         vfp.add( stepsize.getSliderControls(true) );
