@@ -250,7 +250,7 @@ public class A1App implements SceneGraphNode, Interactor {
             }
         });
         
-        JButton create4 = new JButton("create test system 4");
+        JButton create4 = new JButton("Create Movie Scene");
         vfp.add( create4 );
         create4.addActionListener( new ActionListener() {
             @Override

@@ -305,11 +305,18 @@ public class ParticleSystem implements SceneGraphNode, Function, Filter {
 	private DenseMatrix A;
 	private DenseMatrix dfdx;
 	private DenseMatrix dfdv;
-	private DenseVector deltaxdot;
 	private DenseVector b;
 	private DenseVector f;
-	private DenseVector xdot;
-
+	
+	private DenseMatrix I;
+	private DenseVector dfdvv0;
+	private DenseVector x0;
+	private DenseVector v0;	
+	private DenseVector deltax;	
+	private DenseVector deltav;	
+	private DenseVector dfdt;
+	private DenseVector xnew;
+	private DenseVector vnew;
 	/**
 	 * Initializes the system Allocates the arrays and vectors necessary for the
 	 * solve of the full system
@@ -322,10 +329,23 @@ public class ParticleSystem implements SceneGraphNode, Function, Filter {
 		A = new DenseMatrix(2 * N, 2 * N);
 		dfdx = new DenseMatrix(2 * N, 2 * N);
 		dfdv = new DenseMatrix(2 * N, 2 * N);
-		deltaxdot = new DenseVector(2 * N);
+		deltav = new DenseVector(2 * N);
 		b = new DenseVector(2 * N);
 		f = new DenseVector(2 * N);
-		xdot = new DenseVector(2 * N);
+		deltax = new DenseVector(2 * N);
+		
+		
+		//The identity matrix
+		I = new DenseMatrix(2*N,2*N);
+		for (int i = 0; i < 2*N ; i++) {
+			I.set(i, i, 1.0);
+		}
+		dfdvv0 = new DenseVector(2*N);
+		v0 = new DenseVector(2*N);
+		x0 = new DenseVector(2*N);
+		dfdt = new DenseVector(2*N);
+		xnew = new DenseVector(2*N);
+		vnew = new DenseVector(2*N);
 	}
 
 	/**
@@ -403,8 +423,6 @@ public class ParticleSystem implements SceneGraphNode, Function, Filter {
 			spring.apply();
 		}
 
-		// Include spring damping
-
 		// set dydt
 		int i = 0;
 		for (Particle p : particles) {
@@ -443,13 +461,93 @@ public class ParticleSystem implements SceneGraphNode, Function, Filter {
 			if (f == null || f.size() != n) {
 				init();
 			}
-
-			// TODO: implement backward euler here!
-
+			if (n != state.length) {
+				state = new double[n];
+				stateOut = new double[n];
+			}			
+			getPhaseSpace(state);
+			backwardEuler(state,n,elapsed,stateOut);
+			setPhaseSpace(stateOut);
 		}
 		time = time + elapsed;
 		postStepFix();
 		computeTime = (System.nanoTime() - now) / 1e9;
+	}
+	
+	/**
+	 * This algorithm and the notations used come directly
+	 * from the PBM notes. 
+	 * After the state is loaded, it is sent to the v0 and x0 vectors
+	 * through the 
+	 */	
+	public void backwardEuler(double[] state, int n, double h, double[] stateOut) {
+		int numIts = iterations.getValue();
+		
+		//Get phase space.
+		setupV0X0();
+		
+		//Compute f
+		
+		//Compute dfdx
+		
+		//Compute dfdv
+		
+		//Compute dfdt
+		
+		
+		//Compute A = I - h*dfdv - h*h*dfdx
+		dfdv.scale(h);
+		dfdx.scale(h*h);			
+		A.add(I);
+		A.add(-1.0, dfdv);
+		A.add(-1.0,dfdx);
+		
+		//Compute b = h ( f + h * dfdv * v0 + dfdt);
+		b.add(f);
+		dfdv.mult(v0, dfdvv0);
+		dfdvv0.scale(h);
+		b.add(dfdvv0);
+		b.add(dfdt);
+		b.scale(h);
+		
+		//Solve matrix
+		CG.solve(A, b, deltav, numIts);
+		
+		//Compute output phase space.
+		
+		//vnew = v0+deltav
+		vnew.add(v0);
+		vnew.add(deltav);
+		
+		//deltax = h*vnew
+		deltax.add(vnew);
+		deltax.scale(h);
+		
+		//xnew = x0 + deltax
+		xnew.add(x0);
+		xnew.add(deltax);
+		
+		getStateOut();
+	}
+	
+	public void setupV0X0() {
+		for (int i = 0 ; i < state.length ; i+=4) {
+			int j = i/2;
+			x0.set(j,state[i]);
+			x0.set(j+1,state[i+1]);
+			v0.set(j,state[i+2]);
+			v0.set(j,state[i+3]);
+		}
+	}
+	
+	public void getStateOut() {
+		for (int i = 0 ; i < stateOut.length ; i+=4) {
+			int j = i/2;
+			stateOut[i]=xnew.get(j);
+			stateOut[i+1]=xnew.get(j+1);
+			stateOut[i+2]=vnew.get(j);
+			stateOut[i+3]=vnew.get(j+1);			
+		}
 	}
 
 	@Override

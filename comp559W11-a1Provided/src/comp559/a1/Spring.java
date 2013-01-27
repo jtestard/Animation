@@ -86,30 +86,7 @@ public class Spring {
      * @param f
      */
     public void addForce(Vector f) {
-    	//TODO : rewrite this method.
-    	//Set the line vector.
-    	double lx = p1.p.x-p2.p.x;
-    	double ly = p1.p.y-p2.p.y;
-    	l.set(lx,ly);
-    	//Set up the line velocity
-    	double vx = p1.v.x-p2.v.x;
-    	double vy = p2.v.y-p2.v.y;
-    	v.set(vx,vy);
-    	
-    	double scalar = - (k * (l.length() - l0) + c * ((v.dot(l))/l.length()) );
-    	fp1.set(l.x,l.y);
-    	fp1.normalize();
-    	fp1.scale(scalar);
-    	
-    	fp2.set(fp1.x,fp1.y);
-    	fp2.negate();
-    	
-    	//Add forces to particles
-//    	f.set(0,f.get(0)+fp1.x);
-//    	f.set(1,f.get(0)+fp1.x);    	
-//    	f.y+=fp1.y;
-//    	p2.f.x+=fp2.x;
-    	p2.f.y+=fp2.y;    	
+    	// TODO : Finish this code for backward euler.
     }
     
     /**

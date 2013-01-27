@@ -14,7 +14,6 @@ public class ModifiedMidpoint implements Integrator {
     
     @Override
     public void step(double[] y, int n, double t, double h, double[] yout, Function derivs) {
-        // TODO: implement this method
     	
         //Avoid useless memory allocation if size did not change
     	if (old_n!=n) {
